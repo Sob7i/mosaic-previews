@@ -66,7 +66,6 @@ for (const name of blocks) {
   const file = join(out, `${name}.webp`);
   const fitted = await sharp(source).resize(FRAME.w, FRAME.h, { fit: 'contain', background: pageBackground, kernel: 'lanczos3' }).webp({ quality: QUALITY, effort: 6 }).toBuffer();
   writeFileSync(file, fitted);
-  writeFileSync(join('/private/tmp/claude-502/-Users-sobhialkhuder-Documents-sl-mosaic/8c30d7b0-69ae-4fdb-a690-dbcd7ea10d98/scratchpad/full', `${name}.png`), png);
   console.log(name, statSync(file).size, 'bytes');
 }
 await b.close();
