@@ -40,3 +40,7 @@ Preview pictures for the Mosaic Salla theme's home blocks, served through jsDeli
 
 `home.mosaic-blog` has no picture yet: the demo store's blog is switched off, so the block renders nothing.
 `home.mosaic-highlights` is not here yet.
+
+## How they were made
+
+`capture/` holds the scripts: `gen.py` writes the theme worktree's `twilight.preview.json` from the demo store, `shoot.mjs` captures each section and encodes the webp with sharp, `shoot-promo.mjs` captures the popup card (run with only the promo block in the preview, otherwise the engine leaves it as a skeleton). Paths inside are those of the machine they ran on.
