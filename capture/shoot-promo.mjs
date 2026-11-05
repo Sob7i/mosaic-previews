@@ -19,11 +19,13 @@ await p.waitForTimeout(1500);
 const card = p.locator('.m-modal__card').first();
 await card.waitFor({ timeout: 20000 });
 await p.waitForTimeout(2500);
+const bg = await p.evaluate(() => getComputedStyle(document.body).backgroundColor);
 await p.evaluate(() => {
   const root = document.querySelector('.m-modal');
   for (const e of document.body.children) if (!e.contains(root) && e !== root) e.style.visibility = 'hidden';
   document.querySelector('.m-modal__scrim').style.display = 'none';
-  document.body.style.background = '#eeeef6';
+  document.body.style.background = getComputedStyle(document.body).backgroundColor;
+  
   for (const e of document.body.querySelectorAll('*')) {
     if (root.contains(e) || e.contains(root)) continue;
     const pos = getComputedStyle(e).position;
@@ -34,8 +36,8 @@ await p.evaluate(() => document.activeElement && document.activeElement.blur());
 const r = await card.boundingBox();
 const pad = 16;
 const png = await p.screenshot({ clip: { x: Math.max(0, r.x - pad), y: Math.max(0, r.y - pad), width: r.width + 2 * pad, height: r.height + 2 * pad }, animations: 'disabled' });
-const corner = await sharp(png).extract({ left: 1, top: 1, width: 1, height: 1 }).raw().toBuffer();
-const fitted = await sharp(png).resize(634, 600, { fit: 'contain', background: { r: corner[0], g: corner[1], b: corner[2] }, kernel: 'lanczos3' }).webp({ quality: 80, effort: 6 }).toBuffer();
+const m = (await (async () => bg)()).match(/[\d.]+/g).map(Number);
+const fitted = await sharp(png).resize(634, 600, { fit: 'contain', background: { r: m[0], g: m[1], b: m[2] }, kernel: 'lanczos3' }).webp({ quality: 80, effort: 6 }).toBuffer();
 writeFileSync(join(out, 'mosaic-promo.webp'), fitted);
 console.log('mosaic-promo', statSync(join(out, 'mosaic-promo.webp')).size, 'bytes', r.width, r.height);
 await b.close();

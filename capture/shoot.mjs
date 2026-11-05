@@ -36,12 +36,34 @@ for (const name of blocks) {
       if (pos === 'fixed' || pos === 'sticky') e.style.visibility = 'hidden';
     }
   }, sel);
+  await p.evaluate((n) => { const r = document.querySelector(n).getBoundingClientRect(); window.scrollTo(0, Math.max(0, r.top + scrollY - 300)); }, sel);
+  await p.waitForTimeout(500);
   const box = await p.evaluate((n) => { const r = document.querySelector(n).getBoundingClientRect(); return { x: Math.ceil(r.left), y: r.top + scrollY, width: Math.floor(r.width), height: Math.floor(r.height) }; }, sel);
   const png = await p.screenshot({ fullPage: true, clip: box, animations: 'disabled' });
-  const corner = await sharp(png).extract({ left: 2, top: 2, width: 1, height: 1 }).raw().toBuffer();
-  const BACKDROP = { r: corner[0], g: corner[1], b: corner[2] };
+  const pageBackground = await p.evaluate(() => {
+    for (const e of [document.body, document.documentElement]) {
+      const m = getComputedStyle(e).backgroundColor.match(/[\d.]+/g).map(Number);
+      if (m.length < 4 || m[3] > 0) return { r: m[0], g: m[1], b: m[2] };
+    }
+    return { r: 255, g: 255, b: 255 };
+  });
+  const meta = await sharp(png).metadata();
+  const thin = box.height * Number(process.env.THIN_DEN ?? 4) < box.width;
+  const cropWidth = Math.round((meta.width * 2) / 3);
+  const headingCentre = await p.evaluate(({ n, left }) => {
+    const heading = document.querySelector(n).querySelector('h1, h2, h3');
+    if (!heading) return null;
+    const range = document.createRange();
+    range.selectNodeContents(heading);
+    const r = range.getBoundingClientRect();
+    return r.left + r.width / 2 - left;
+  }, { n: sel, left: box.x });
+  const wanted = headingCentre === null ? meta.width : Math.round(headingCentre * 2) + cropWidth / 2;
+  const cropLeft = Math.round(Math.min(meta.width - cropWidth, Math.max(0, wanted - cropWidth)));
+  const source = thin ? await sharp(png).extract({ left: cropLeft, top: 0, width: cropWidth, height: meta.height }).png().toBuffer() : png;
+  console.log(name, thin ? 'thin: half, left ' + cropLeft : 'whole', box.width + 'x' + box.height, JSON.stringify(pageBackground));
   const file = join(out, `${name}.webp`);
-  const fitted = await sharp(png).resize(FRAME.w, FRAME.h, { fit: 'contain', background: BACKDROP, kernel: 'lanczos3' }).webp({ quality: QUALITY, effort: 6 }).toBuffer();
+  const fitted = await sharp(source).resize(FRAME.w, FRAME.h, { fit: 'contain', background: pageBackground, kernel: 'lanczos3' }).webp({ quality: QUALITY, effort: 6 }).toBuffer();
   writeFileSync(file, fitted);
   writeFileSync(join('/private/tmp/claude-502/-Users-sobhialkhuder-Documents-sl-mosaic/8c30d7b0-69ae-4fdb-a690-dbcd7ea10d98/scratchpad/full', `${name}.png`), png);
   console.log(name, statSync(file).size, 'bytes');
