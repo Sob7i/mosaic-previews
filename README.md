@@ -3,11 +3,13 @@
 Preview pictures for the Mosaic Salla theme's home blocks, served through jsDelivr:
 `https://cdn.jsdelivr.net/gh/Sob7i/mosaic-previews@v1/<file>`
 
+The benefits bar, products slider and products grid pictures are added after v1 and ship under `@v2` (v2 also holds every v1 file).
+
 ## Frame
 
 - 634 x 600 px, webp quality 80, 30 KB or less each.
 - Each picture is the block's own section at 1440 px wide, Arabic, light mode, captured at device scale factor 2, then scaled whole into the frame ("contain"). The letterbox colour is the page background computed on `body` at capture time (light mode, `#eeeef6`).
-- Thin sections (height under a quarter of the width: ticker, newsletter, campaign benefits, reviews, faq and closing) are cropped to a window two thirds of the section's width, full height, centred on the section's heading text (right edge when the section has no heading), then scaled into the frame. Everything else is shown whole.
+- Thin sections (height under a quarter of the width: ticker, newsletter, benefits bar, campaign benefits, reviews, faq and closing) are cropped to a window two thirds of the section's width, full height, centred on the section's heading text (right edge when the section has no heading), then scaled into the frame. Everything else is shown whole.
 - Content is the Mosaic demo store's real products, categories and photos.
 - `mosaic-promo` is the popup card, captured after its delay.
 
@@ -15,6 +17,7 @@ Preview pictures for the Mosaic Salla theme's home blocks, served through jsDeli
 
 | Block | File | Bytes |
 |---|---|---|
+| home.mosaic-benefits | mosaic-benefits.webp | 3,778 |
 | home.mosaic-campaign-benefits | mosaic-campaign-benefits.webp | 2,214 |
 | home.mosaic-campaign-closing | mosaic-campaign-closing.webp | 5,440 |
 | home.mosaic-campaign-faq | mosaic-campaign-faq.webp | 4,560 |
@@ -33,6 +36,8 @@ Preview pictures for the Mosaic Salla theme's home blocks, served through jsDeli
 | home.mosaic-newsletter | mosaic-newsletter.webp | 3,964 |
 | home.mosaic-notes | mosaic-notes.webp | 8,968 |
 | home.mosaic-offer | mosaic-offer.webp | 7,090 |
+| home.mosaic-products-grid | mosaic-products-grid.webp | 8,020 |
+| home.mosaic-products-slider | mosaic-products-slider.webp | 9,682 |
 | home.mosaic-promo | mosaic-promo.webp | 12,672 |
 | home.mosaic-shorts | mosaic-shorts.webp | 17,584 |
 | home.mosaic-slideshow | mosaic-slideshow.webp | 14,132 |
